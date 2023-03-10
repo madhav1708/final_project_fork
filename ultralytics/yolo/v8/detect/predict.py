@@ -20,21 +20,27 @@ from deep_sort_pytorch.utils.parser import get_config
 from deep_sort_pytorch.deep_sort import DeepSort
 from collections import deque
 import numpy as np
+
 palette = (2 ** 11 - 1, 2 ** 15 - 1, 2 ** 20 - 1)
 data_deque = {}
 
 deepsort = None
+
 
 def init_tracker():
     global deepsort
     cfg_deep = get_config()
     cfg_deep.merge_from_file("deep_sort_pytorch/configs/deep_sort.yaml")
 
-    deepsort= DeepSort(cfg_deep.DEEPSORT.REID_CKPT,
-                            max_dist=cfg_deep.DEEPSORT.MAX_DIST, min_confidence=cfg_deep.DEEPSORT.MIN_CONFIDENCE,
-                            nms_max_overlap=cfg_deep.DEEPSORT.NMS_MAX_OVERLAP, max_iou_distance=cfg_deep.DEEPSORT.MAX_IOU_DISTANCE,
-                            max_age=cfg_deep.DEEPSORT.MAX_AGE, n_init=cfg_deep.DEEPSORT.N_INIT, nn_budget=cfg_deep.DEEPSORT.NN_BUDGET,
-                            use_cuda=True)
+    deepsort = DeepSort(cfg_deep.DEEPSORT.REID_CKPT,
+                        max_dist=cfg_deep.DEEPSORT.MAX_DIST, min_confidence=cfg_deep.DEEPSORT.MIN_CONFIDENCE,
+                        nms_max_overlap=cfg_deep.DEEPSORT.NMS_MAX_OVERLAP,
+                        max_iou_distance=cfg_deep.DEEPSORT.MAX_IOU_DISTANCE,
+                        max_age=cfg_deep.DEEPSORT.MAX_AGE, n_init=cfg_deep.DEEPSORT.N_INIT,
+                        nn_budget=cfg_deep.DEEPSORT.NN_BUDGET,
+                        use_cuda=True)
+
+
 ##########################################################################################
 def xyxy_to_xywh(*xyxy):
     """" Calculates the relative bounding box from absolute pixel values. """
@@ -48,6 +54,7 @@ def xyxy_to_xywh(*xyxy):
     h = bbox_h
     return x_c, y_c, w, h
 
+
 def xyxy_to_tlwh(bbox_xyxy):
     tlwh_bboxs = []
     for i, box in enumerate(bbox_xyxy):
@@ -60,14 +67,15 @@ def xyxy_to_tlwh(bbox_xyxy):
         tlwh_bboxs.append(tlwh_obj)
     return tlwh_bboxs
 
+
 def compute_color_for_labels(label):
     """
     Simple function that adds fixed color depending on the class
     """
-    if label == 0: #person
-        color = (85,45,255)
-    elif label == 2: # Car
-        color = (222,82,175)
+    if label == 0:  # person
+        color = (85, 45, 255)
+    elif label == 2:  # Car
+        color = (222, 82, 175)
     elif label == 3:  # Motobike
         color = (0, 204, 255)
     elif label == 5:  # Bus
@@ -76,9 +84,10 @@ def compute_color_for_labels(label):
         color = [int((p * (label ** 2 - label + 1)) % 255) for p in palette]
     return tuple(color)
 
+
 def draw_border(img, pt1, pt2, color, thickness, r, d):
-    x1,y1 = pt1
-    x2,y2 = pt2
+    x1, y1 = pt1
+    x2, y2 = pt2
     # Top left
     cv2.line(img, (x1 + r, y1), (x1 + r + d, y1), color, thickness)
     cv2.line(img, (x1, y1 + r), (x1, y1 + r + d), color, thickness)
@@ -98,13 +107,14 @@ def draw_border(img, pt1, pt2, color, thickness, r, d):
 
     cv2.rectangle(img, (x1 + r, y1), (x2 - r, y2), color, -1, cv2.LINE_AA)
     cv2.rectangle(img, (x1, y1 + r), (x2, y2 - r - d), color, -1, cv2.LINE_AA)
-    
-    cv2.circle(img, (x1 +r, y1+r), 2, color, 12)
-    cv2.circle(img, (x2 -r, y1+r), 2, color, 12)
-    cv2.circle(img, (x1 +r, y2-r), 2, color, 12)
-    cv2.circle(img, (x2 -r, y2-r), 2, color, 12)
-    
+
+    cv2.circle(img, (x1 + r, y1 + r), 2, color, 12)
+    cv2.circle(img, (x2 - r, y1 + r), 2, color, 12)
+    cv2.circle(img, (x1 + r, y2 - r), 2, color, 12)
+    cv2.circle(img, (x2 - r, y2 - r), 2, color, 12)
+
     return img
+
 
 def UI_box(x, img, color=None, label=None, line_thickness=None):
     # Plots one bounding box on image img
@@ -112,24 +122,24 @@ def UI_box(x, img, color=None, label=None, line_thickness=None):
     color = color or [random.randint(0, 255) for _ in range(3)]
     c1, c2 = (int(x[0]), int(x[1])), (int(x[2]), int(x[3]))
     cv2.rectangle(img, c1, c2, color, thickness=tl, lineType=cv2.LINE_AA)
+    # this will create a rectangle around detected object
     if label:
         tf = max(tl - 1, 1)  # font thickness
         t_size = cv2.getTextSize(label, 0, fontScale=tl / 3, thickness=tf)[0]
 
-        img = draw_border(img, (c1[0], c1[1] - t_size[1] -3), (c1[0] + t_size[0], c1[1]+3), color, 1, 8, 2)
+        img = draw_border(img, (c1[0], c1[1] - t_size[1] - 3), (c1[0] + t_size[0], c1[1] + 3), color, 1, 8, 2)
 
         cv2.putText(img, label, (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
 
 
-
-def draw_boxes(img, bbox, names,object_id, identities=None, offset=(0, 0)):
-    #cv2.line(img, line[0], line[1], (46,162,112), 3)
+def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
+    # cv2.line(img, line[0], line[1], (46,162,112), 3)
 
     height, width, _ = img.shape
     # remove tracked point from buffer if object is lost
     for key in list(data_deque):
-      if key not in identities:
-        data_deque.pop(key)
+        if key not in identities:
+            data_deque.pop(key)
 
     for i, box in enumerate(bbox):
         x1, y1, x2, y2 = [int(i) for i in box]
@@ -139,17 +149,17 @@ def draw_boxes(img, bbox, names,object_id, identities=None, offset=(0, 0)):
         y2 += offset[1]
 
         # code to find center of bottom edge
-        center = (int((x2+x1)/ 2), int((y2+y2)/2))
+        center = (int((x2 + x1) / 2), int((y2 + y2) / 2))
 
         # get ID of object
         id = int(identities[i]) if identities is not None else 0
 
         # create new buffer for new object
-        if id not in data_deque:  
-          data_deque[id] = deque(maxlen= 64)
+        if id not in data_deque:
+            data_deque[id] = deque(maxlen=64)
         color = compute_color_for_labels(object_id[i])
         obj_name = names[object_id[i]]
-        label = '{}{:d}'.format("", id) + ":"+ '%s' % (obj_name)
+        label = '{}{:d}'.format("", id) + "->" + '%s' % obj_name
 
         # add center to buffer
         data_deque[id].appendleft(center)
@@ -231,14 +241,14 @@ class DetectionPredictor(BasePredictor):
             oids.append(int(cls))
         xywhs = torch.Tensor(xywh_bboxs)
         confss = torch.Tensor(confs)
-          
+
         outputs = deepsort.update(xywhs, confss, oids, im0)
         if len(outputs) > 0:
             bbox_xyxy = outputs[:, :4]
             identities = outputs[:, -2]
             object_id = outputs[:, -1]
-            
-            draw_boxes(im0, bbox_xyxy, self.model.names, object_id,identities)
+            # using object id we get the object name
+            draw_boxes(im0, bbox_xyxy, self.model.names, object_id, identities)
 
         return log_string
 
