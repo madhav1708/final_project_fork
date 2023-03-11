@@ -26,6 +26,21 @@ data_deque = {}
 
 deepsort = None
 
+object_counter = {}
+
+object_counter1 = {}
+
+speed_line_queue = {}
+
+
+def estimatespeed(Location1, Location2):
+    d_pixel = math.sqrt(math.pow(Location2[0] - Location1[0], 2) + math.pow(Location2[1] - Location1[1], 2))
+    ppm = 8
+    d_meters = d_pixel / ppm
+    time_constant = 15
+    speed = d_meters * time_constant * 3.6
+    return int(speed)
+
 
 def init_tracker():
     global deepsort
@@ -159,11 +174,24 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
             data_deque[id] = deque(maxlen=64)
         color = compute_color_for_labels(object_id[i])
         obj_name = names[object_id[i]]
-        label = '{}{:d}'.format("", id) + "->" + '%s' % obj_name
+        label = '{}{:d}'.format("", id) + ":" + '%s' % obj_name
 
         # add center to buffer
         data_deque[id].appendleft(center)
+
+        #speed calculation
+
+        if len(data_deque[id])>=2:
+            object_speed=estimatespeed(data_deque[id][1],data_deque[id][0])
+            speed_line_queue[id].append(object_speed)
+
+        try:
+            label=label+" "+str(sum(speed_line_queue[id])//len(speed_line_queue[id]))+"km/hr"
+        except:
+            pass
+
         UI_box(box, img, label=label, color=color, line_thickness=2)
+
         # draw trail
         for i in range(1, len(data_deque[id])):
             # check if on buffer value is none
