@@ -37,7 +37,7 @@ def estimatespeed(Location1, Location2):
     d_pixel = math.sqrt(math.pow(Location2[0] - Location1[0], 2) + math.pow(Location2[1] - Location1[1], 2))
     ppm = 8
     d_meters = d_pixel / ppm
-    time_constant = 15
+    time_constant = 30
     speed = d_meters * time_constant * 3.6
     return int(speed)
 
