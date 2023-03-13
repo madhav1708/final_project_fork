@@ -35,7 +35,7 @@ speed_line_queue = {}
 
 def estimatespeed(Location1, Location2):
     d_pixel = math.sqrt(math.pow(Location2[0] - Location1[0], 2) + math.pow(Location2[1] - Location1[1], 2))
-    ppm = 10
+    ppm = 6
     d_meters = d_pixel / ppm
     time_constant = 15
     speed = d_meters * time_constant * 3.6
