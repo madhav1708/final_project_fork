@@ -35,7 +35,7 @@ speed_line_queue = {}
 
 def estimatespeed(Location1, Location2):
     d_pixel = math.sqrt(math.pow(Location2[0] - Location1[0], 2) + math.pow(Location2[1] - Location1[1], 2))
-    ppm = 6
+    ppm = 9
     d_meters = d_pixel / ppm
     time_constant = 15
     speed = d_meters * time_constant * 3.6
@@ -172,7 +172,7 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
         # create new buffer for new object
         if id not in data_deque:
             data_deque[id] = deque(maxlen=64)
-            speed_line_queue[id]=[]
+            speed_line_queue[id] = []
         color = compute_color_for_labels(object_id[i])
         obj_name = names[object_id[i]]
         label = '{}{:d}'.format("", id) + ":" + '%s' % obj_name
@@ -185,9 +185,17 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
         if len(data_deque[id]) >= 2:
             object_speed = estimatespeed(data_deque[id][1], data_deque[id][0])
             speed_line_queue[id].append(object_speed)
+        if len(data_deque[id]) >= 15:
+            # def getAngle(a, b, c):
+            a=data_deque[id][0]
+            b = data_deque[id][5]
+            c = data_deque[id][10]
+            ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
+             if ang < 0:
+                 ang=ang+360
 
         try:
-            label = label + " " + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr"
+            label = label + " " + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr "+ang
         except:
             pass
 
