@@ -175,7 +175,7 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
             speed_line_queue[id] = []
         color = compute_color_for_labels(object_id[i])
         obj_name = names[object_id[i]]
-        label = '{}{:d}'.format("", id) + ":" + '%s' % obj_name + '*'
+        label = '{}{:d}'.format("", id) + ":" + '%s' % obj_name
 
         # add center to buffer
         data_deque[id].appendleft(center)
@@ -194,9 +194,14 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
                  ang=ang+360
 
         try:
-            label = label + "->" + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr--"
+            label = label+str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr--"
         except:
             pass
+        try:
+            label = label +str(ang)
+        except:
+            pass
+        
 
         UI_box(box, img, label=label, color=color, line_thickness=2)
 
