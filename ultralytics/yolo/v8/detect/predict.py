@@ -191,7 +191,7 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
             b = data_deque[id][5]
             c = data_deque[id][10]
             ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
-             if ang < 0:
+            if ang < 0:
                  ang=ang+360
 
         try:
