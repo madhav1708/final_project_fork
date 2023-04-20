@@ -2,7 +2,7 @@
 
 import hydra
 import torch
-import argparse 
+import argparse
 import time
 from pathlib import Path
 import math
@@ -186,22 +186,22 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
             object_speed = estimatespeed(data_deque[id][1], data_deque[id][0])
             speed_line_queue[id].append(object_speed)
         if len(data_deque[id]) >= 11:
-            a=data_deque[id][0]
-            b=data_deque[id][5]
-            c=data_deque[id][10]
+            a = data_deque[id][0]
+            b = data_deque[id][5]
+            c = data_deque[id][10]
             ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
-            if ang < 0:
-                 ang=ang+360
+            ang = abs(180 - ang)
+            ang = round(ang, 2)
+            
 
         try:
-            label = label+str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr--"
+            label = label + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr--"
         except:
             pass
         try:
-            label = label +str(ang)
+            label = label + str(ang)
         except:
             pass
-        
 
         UI_box(box, img, label=label, color=color, line_thickness=2)
 
