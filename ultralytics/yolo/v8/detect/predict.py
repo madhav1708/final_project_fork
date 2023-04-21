@@ -9,6 +9,7 @@ import math
 import cv2
 import torch
 import torch.backends.cudnn as cudnn
+import numpy as np
 from numpy import random
 from ultralytics.yolo.engine.predictor import BasePredictor
 from ultralytics.yolo.utils import DEFAULT_CONFIG, ROOT, ops
@@ -189,10 +190,21 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
             a = data_deque[id][0]
             b = data_deque[id][5]
             c = data_deque[id][10]
-            ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
-            ang = abs(180 - ang)
-            ang = round(ang, 2)
-            
+            # ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
+            # ang = abs(180 - ang)
+            # ang = round(ang, 2)
+
+            aa = np.array([a[0], a[1]])
+            bb = np.array([b[0], b[1]])
+            cc = np.array([c[0], c[1]])
+
+            ba = bb-aa
+            bc = cc - bb
+
+            cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+            angle = np.arccos(cosine_angle)
+
+            ang = np.degrees(angle)
 
         try:
             label = label + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr--"
