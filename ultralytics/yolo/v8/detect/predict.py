@@ -205,6 +205,7 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
             angle = np.arccos(cosine_angle)
             if math.isnan(angle) == 0:
                 prob = math.sin(math.radians(angle))
+                prob = round(prob, 4)
 
 
 
