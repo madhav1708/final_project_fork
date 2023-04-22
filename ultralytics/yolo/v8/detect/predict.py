@@ -203,15 +203,17 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
 
             cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
             angle = np.arccos(cosine_angle)
+            if math.isnan(angle) == 0:
+                prob = math.sin(math.radians(angle))
 
-            ang = np.degrees(angle)
+
 
         try:
             label = label + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr--"
         except:
             pass
         try:
-            label = label + str(ang)
+            label = label + str(prob)
         except:
             pass
 
