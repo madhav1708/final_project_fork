@@ -186,10 +186,10 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
         if len(data_deque[id]) >= 2:
             object_speed = estimatespeed(data_deque[id][1], data_deque[id][0])
             speed_line_queue[id].append(object_speed)
-        if len(data_deque[id]) >= 11:
+        if len(data_deque[id]) >= 31:
             a = data_deque[id][0]
-            b = data_deque[id][5]
-            c = data_deque[id][10]
+            b = data_deque[id][15]
+            c = data_deque[id][30]
             # ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
             # ang = abs(180 - ang)
             # ang = round(ang, 2)
