@@ -186,10 +186,10 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
         if len(data_deque[id]) >= 2:
             object_speed = estimatespeed(data_deque[id][1], data_deque[id][0])
             speed_line_queue[id].append(object_speed)
-        if len(data_deque[id]) >= 31:
+        if len(data_deque[id]) >= 11:
             a = data_deque[id][0]
-            b = data_deque[id][15]
-            c = data_deque[id][30]
+            b = data_deque[id][5]
+            c = data_deque[id][10]
             # ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
             # ang = abs(180 - ang)
             # ang = round(ang, 2)
@@ -205,20 +205,21 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
             angle = np.arccos(cosine_angle)
             if math.isnan(angle) == 0:
                 prob = math.sin(math.radians(angle))
-                prob = round(prob, 4)
 
 
 
         try:
             label = label + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr--"
-        except:
-            pass
-        try:
             label = label + str(prob)
+            if sum(speed_line_queue[id]) // len(speed_line_queue[id]) > 60:
+                color=[255,0,0]
+                UI_box(box, img, label=label, color=color, line_thickness=2)
+            else
+                UI_box(box, img, label=label, color=color, line_thickness=2)
         except:
             pass
-
-        UI_box(box, img, label=label, color=color, line_thickness=2)
+        
+        #UI_box(box, img, label=label, color=color, line_thickness=2)
 
         # draw trail
         for i in range(1, len(data_deque[id])):
