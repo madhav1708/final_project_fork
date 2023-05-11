@@ -36,7 +36,7 @@ speed_line_queue = {}
 
 def estimatespeed(Location1, Location2):
     d_pixel = math.sqrt(math.pow(Location2[0] - Location1[0], 2) + math.pow(Location2[1] - Location1[1], 2))
-    ppm = 6
+    ppm = 4
     d_meters = d_pixel / ppm
     time_constant = 15
     speed = d_meters * time_constant * 3.6
@@ -205,14 +205,14 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
             angle = np.arccos(cosine_angle)
             if math.isnan(angle) == 0:
                 prob = math.sin(math.radians(angle))
-
+                prob = round(prob, 4)
 
 
         try:
-            label = label + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr--"
-            label = label + str(prob)
-            if sum(speed_line_queue[id]) // len(speed_line_queue[id]) > 60:
-                color=[255,0,0]
+            label = label + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr,"
+            label = label + str(prob)+'\u00B0'
+            if sum(speed_line_queue[id]) // len(speed_line_queue[id]) > 90:
+                color=[0,0,255]
                 UI_box(box, img, label=label, color=color, line_thickness=2)
             else
                 UI_box(box, img, label=label, color=color, line_thickness=2)
