@@ -211,7 +211,7 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
         try:
             label = label + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr,"
             label = label + str(prob)
-            if sum(speed_line_queue[id]) // len(speed_line_queue[id]) > 90:
+            if sum(speed_line_queue[id]) // len(speed_line_queue[id]) > 85:
                 color=[0,0,255]
                 UI_box(box, img, label=label, color=color, line_thickness=2)
             else:
