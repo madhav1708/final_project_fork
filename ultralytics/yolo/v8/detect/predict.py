@@ -186,6 +186,7 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
         if len(data_deque[id]) >= 2:
             object_speed = estimatespeed(data_deque[id][1], data_deque[id][0])
             speed_line_queue[id].append(object_speed)
+        #angle calculation
         if len(data_deque[id]) >= 11:
             a = data_deque[id][0]
             b = data_deque[id][5]
@@ -211,7 +212,7 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
         try:
             label = label + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr,"
             label = label + str(prob)
-            if sum(speed_line_queue[id]) // len(speed_line_queue[id]) > 80:
+            if sum(speed_line_queue[id]) // len(speed_line_queue[id]) > 80 or prob >= 0.05:##reckless driving condition
                 color=[0,0,255]
                 UI_box(box, img, label=label, color=color, line_thickness=2)
             else:
