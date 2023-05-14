@@ -32,7 +32,7 @@ object_counter = {}
 object_counter1 = {}
 
 speed_line_queue = {}
-line = [(100, 500), (1050, 500)]
+line = [(50, 530), (1150, 530)]
 
 def estimatespeed(Location1, Location2):
     d_pixel = math.sqrt(math.pow(Location2[0] - Location1[0], 2) + math.pow(Location2[1] - Location1[1], 2))
@@ -211,7 +211,7 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
         try:
             label = label + str(sum(speed_line_queue[id]) // len(speed_line_queue[id])) + "km/hr,"
             label = label + str(prob)
-            if sum(speed_line_queue[id]) // len(speed_line_queue[id]) > 85:
+            if sum(speed_line_queue[id]) // len(speed_line_queue[id]) > 80:
                 color=[0,0,255]
                 UI_box(box, img, label=label, color=color, line_thickness=2)
             else:
