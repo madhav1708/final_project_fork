@@ -32,7 +32,7 @@ object_counter = {}
 object_counter1 = {}
 
 speed_line_queue = {}
-
+line = [(100, 500), (1050, 500)]
 
 def estimatespeed(Location1, Location2):
     d_pixel = math.sqrt(math.pow(Location2[0] - Location1[0], 2) + math.pow(Location2[1] - Location1[1], 2))
@@ -149,7 +149,7 @@ def UI_box(x, img, color=None, label=None, line_thickness=None):
 
 
 def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
-    # cv2.line(img, line[0], line[1], (46,162,112), 3)
+    cv2.line(img, line[0], line[1], (46,162,112), 3)
 
     height, width, _ = img.shape
     # remove tracked point from buffer if object is lost
