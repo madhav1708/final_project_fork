@@ -88,9 +88,9 @@ def compute_color_for_labels(label):
     """
     Simple function that adds fixed color depending on the class
     """
-    if label == 0:  # person
-        color = (85, 45, 255)
-    elif label == 2:  # Car
+    #if label == 0:  # person
+    #   color = (85, 45, 255)
+    if label == 2:  # Car
         color = (222, 82, 175)
     elif label == 3:  # Motobike
         color = (0, 204, 255)
